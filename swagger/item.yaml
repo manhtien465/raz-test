@@ -1,0 +1,159 @@
+tags:
+  - name: Item
+    description: Item API
+
+paths:
+  # [GET] career
+  /item:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Item
+      summary: Find Item
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          default: keyword
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+    # [POST] career
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Item
+      summary: Add Item
+      parameters:
+        - name: body
+          in: body
+          description: Item Data
+          required: true
+          schema:
+            $ref: '#/definitions/itemCreate'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+  # [GET] master-code/id
+  /item/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Item
+      summary: Find Item By Id
+      parameters:
+        - name: id
+          in: path
+          description: Employee  Kpi Id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+    # [PUT] item/id
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Item
+      summary: Update EmployeeEducation By Id
+      parameters:
+        - name: id
+          in: path
+          description: Item Id
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Item Data
+          required: true
+          schema:
+            $ref: '#/definitions/itemUpdate'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+    # [DELETE] item/id
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Item
+      summary: Delete Item By Id
+      parameters:
+        - name: id
+          in: path
+          description: Item Id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# definitions
+definitions:
+  itemCreate:
+    type: object
+    properties:
+      name:
+        type: string
+        require: true
+        description: name
+        default: sword
+      description:
+        type: string
+        description: description
+        default: description
+      function:
+        type: string
+        description: function
+        default: function
+
+  itemUpdate:
+    type: object
+    properties:
+      name:
+        type: string
+        require: true
+        description: name
+        default: sword
+      description:
+        type: string
+        description: description
+        default: description
+      function:
+        type: string
+        description: function
+        default: function
+
+schemes:
+  - https
+  - http

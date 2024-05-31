@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  raz:
+    container_name: raz
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    ports:
+      - '4321:3000'
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: raz
+      DB_PASSWORD: raz2024
+      DB_DATABASE: raz
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    restart: unless-stopped
+    networks:
+      - backend
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: hrmkg2024
+      MYSQL_DATABASE: hrmkg
+      MYSQL_USER: hrmkg
+      MYSQL_PASSWORD: hrmkg2024
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
