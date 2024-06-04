@@ -2,8 +2,8 @@ const { sign } = require('jsonwebtoken');
 const { JWT_EXPIRES_IN, JWT_SECRET } = require('../config');
 const { HttpException } = require('../exceptions/HttpException');
 const ms = require('ms');
-const UserModel = require('../models/users.model');
-const { ErrorMessageKey, ErrorMessage } = require('../constants/ErrorMessage');
+const { ErrorMessage } = require('../constants/ErrorMessage');
+const UserRepository = require('../repository/user.repository');
 
 const createToken = user => {
   const dataStoredInToken = {
@@ -19,15 +19,13 @@ const createToken = user => {
 
 class AuthService {
   async login(userData) {
-    const findUser = await UserModel.findOne({ where: { username: userData.username } });
+    const findUser = await new UserRepository().findOne({ where: { username: userData.username } });
 
-    if (!findUser) throw new HttpException(401, ErrorMessage[ErrorMessageKey.INCORRECT_LOGIN], ErrorMessageKey.UNAUTHORIZED);
-
+    if (!findUser) throw new HttpException(401, ErrorMessage.INCORRECT_LOGIN);
     const isPasswordMatching = userData.password === findUser.password;
-    if (!isPasswordMatching) throw new HttpException(401, ErrorMessage[ErrorMessageKey.INCORRECT_LOGIN], ErrorMessageKey.UNAUTHORIZED);
+    if (!isPasswordMatching) throw new HttpException(401, ErrorMessage.INCORRECT_LOGIN);
 
     const { token, expiresIn } = await createToken(findUser);
-    delete findUser.dataValues.password;
     return {
       user: findUser,
       accessToken: token,

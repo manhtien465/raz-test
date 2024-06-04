@@ -1,9 +1,8 @@
 const Sequelize = require('sequelize');
-const { logger } = require('../utils/logger');
 
-const { NODE_ENV, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE } = require('../config');
+const { Env, NODE_ENV, DB_HOST, DB_PORT } = require('../config');
 
-const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
+const sequelize = new Sequelize.Sequelize(Env.DB_DATABASE, Env.DB_USER, Env.DB_PASSWORD, {
   dialect: 'mariadb',
   host: DB_HOST,
   port: +DB_PORT,
@@ -22,9 +21,6 @@ const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
     alter: false,
   },
   logQueryParameters: NODE_ENV === 'development',
-  logging: (query, time) => {
-    logger.info(time + 'ms' + ' ' + query);
-  },
   benchmark: true,
 });
 

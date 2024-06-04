@@ -1,7 +1,7 @@
 const { HttpException } = require('../exceptions/HttpException');
 const { Op } = require('sequelize');
-const { ErrorMessage, ErrorMessageKey } = require('../constants/ErrorMessage');
-const ItemModel = require('../models/item.model');
+const { ErrorMessage } = require('../constants/ErrorMessage');
+const ItemRepository = require('../repository/item.repository');
 
 class ItemService {
   async findAll(query) {
@@ -9,8 +9,8 @@ class ItemService {
     if (query.keyword) {
       options.name = { [Op.like]: `%${query.keyword}%` };
     }
-    const itemCount = await ItemModel.count({ where: options });
-    const result = await ItemModel.findAll({
+    const itemCount = await new ItemRepository().count({ where: options });
+    const result = await new ItemRepository().findAll({
       where: options,
       offset: ((+query.page || 1) - 1) * (+query.limit || 20),
       limit: +query.limit || 20,
@@ -19,34 +19,33 @@ class ItemService {
   }
 
   async findById(id) {
-    const find = await ItemModel.findOne({ where: { id: id } });
-    if (!find) throw new HttpException(400, ErrorMessage[ErrorMessageKey.ITEM_NOT_FOUND], ErrorMessageKey.ITEM_NOT_FOUND);
+    const find = await new ItemRepository().findOne({ where: { id: id } });
+    if (!find) throw new HttpException(400, ErrorMessage.ITEM_NOT_FOUND);
 
     return find;
   }
 
   async create(body) {
-    const createData = await ItemModel.create({
+    return new ItemRepository().create({
       ...body,
     });
-    return createData;
   }
 
   async update(id, data) {
-    const find = await ItemModel.findOne({ where: { id: id } });
-    if (!find) throw new HttpException(400, ErrorMessage[ErrorMessageKey.EMPLOYEE_KPI_NOT_FOUND], ErrorMessageKey.EMPLOYEE_KPI_NOT_FOUND);
+    const find = await new ItemRepository().findOne({ where: { id: id } });
+    if (!find) throw new HttpException(400, ErrorMessage.ITEM_NOT_FOUND);
 
-    await ItemModel.update({ ...data }, { where: { id: id } });
+    await new ItemRepository().update({ ...data }, { where: { id: id } });
 
-    const updateItem = await EmpKpiModel.findByPk(id);
+    const updateItem = await new ItemRepository().findByPk(id);
     return updateItem;
   }
 
   async delete(id) {
-    const finded = await ItemModel.findOne({ where: { id: id } });
-    if (!finded) throw new HttpException(400, ErrorMessage[ErrorMessageKey.EMPLOYEE_KPI_NOT_FOUND], ErrorMessageKey.EMPLOYEE_KPI_NOT_FOUND);
+    const finded = await new ItemRepository().findOne({ where: { id: id } });
+    if (!finded) throw new HttpException(400, ErrorMessage.ITEM_NOT_FOUND);
 
-    await ItemModel.destroy({ where: { id: id } });
+    await new ItemRepository().destroy({ where: { id: id } });
 
     return finded;
   }

@@ -1,7 +1,7 @@
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
-const { JWT_SECRET } = require('../config');
-const UserService = require('../services/users.service');
+const { Env } = require('../config');
+const UserService = require('../services/user.service');
 const { ErrorMessageKey, ErrorMessage } = require('../constants/ErrorMessage');
 const { HttpException } = require('../exceptions/HttpException');
 
@@ -11,7 +11,7 @@ class JwtAuthentication {
   constructor() {
     this.jwtOptions = {
       jwtFromRequest: this.headerExtractor,
-      secretOrKey: JWT_SECRET,
+      secretOrKey: Env.JWT_SECRET,
     };
 
     const strategy = new JwtStrategy(this.jwtOptions, async (jwt_payload, next) => {
@@ -39,7 +39,7 @@ class JwtAuthentication {
     const user = await new UserService().findUserAndRole(id);
 
     if (!user) {
-      throw new HttpException(403, ErrorMessage[ErrorMessageKey.UNAUTHORIZED], ErrorMessageKey.UNAUTHORIZED);
+      throw new HttpException(403, ErrorMessage.UNAUTHORIZED);
     }
     return user;
   }

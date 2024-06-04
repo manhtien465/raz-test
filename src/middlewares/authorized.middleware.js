@@ -1,12 +1,11 @@
 const passport = require('passport');
-const { ErrorMessage, ErrorMessageKey } = require('../constants/ErrorMessage');
-const ErrorHandler = require('../exceptions/ErrorHandle');
+const { ErrorMessage } = require('../constants/ErrorMessage');
+const { HttpException } = require('../exceptions/HttpException');
 
 function authorized(request, response, next) {
   passport.authenticate('jwt', { session: false }, async (error, token) => {
     if (error || !token) {
-      const errorResponse = ErrorHandler.error(ErrorMessage[ErrorMessageKey.UNAUTHORIZED], 403, ErrorMessageKey.UNAUTHORIZED);
-      return response.status(403).json(errorResponse);
+      return response.status(403).json(new HttpException(403, ErrorMessage.UNAUTHORIZED, errorCode));
     }
     request.user = token;
     return next();

@@ -1,4 +1,4 @@
-const { ErrorMessageKey, ErrorMessage } = require('../constants/ErrorMessage');
+const { ErrorMessage } = require('../constants/ErrorMessage');
 const { HttpException } = require('../exceptions/HttpException');
 
 function checkPermission(user, permission) {
@@ -12,7 +12,7 @@ const AuthMiddleware = permission => (req, res, next) => {
     if (check) {
       next();
     } else {
-      next(new HttpException(400, ErrorMessage[ErrorMessageKey.UNAUTHORIZED], ErrorMessageKey.UNAUTHORIZED));
+      next(new HttpException(400, ErrorMessage.UNAUTHORIZED));
     }
   } catch (error) {}
 };

@@ -2,19 +2,19 @@ const { extname } = require('path');
 const { diskStorage } = require('multer');
 const { existsSync, mkdirSync } = require('fs');
 const { randomUUID } = require('crypto');
-const { UPLOAD_MAX_FILE_SIZE } = require('.');
+const { Env } = require('.');
 const { HttpException } = require('../exceptions/HttpException');
 
 const multerOptions = {
   // Enable file size limits
   limits: {
-    fileSize: UPLOAD_MAX_FILE_SIZE,
+    fileSize: Env.UPLOAD_MAX_FILE_SIZE,
   },
   // Check the mimetype to allow for upload
   fileFilter: (req, file, cb) => {
     const fileTypeOkay = file.mimetype.match(/\/(jpg|jpeg|png|gif)$/);
     const contentLength = parseInt(req.headers['content-length']);
-    const fileSizeOkay = contentLength <= parseInt(UPLOAD_MAX_FILE_SIZE) || 2097152;
+    const fileSizeOkay = contentLength <= parseInt(Env.UPLOAD_MAX_FILE_SIZE) || 2097152;
     if (fileTypeOkay && fileSizeOkay) {
       // Allow storage of file
       cb(null, true);
@@ -34,7 +34,6 @@ const multerOptions = {
   storage: diskStorage({
     // Destination storage path details
     destination: (req, file, cb) => {
-      console.log('bb');
       const uploadPath = process.env.UPLOAD_LOCATION;
       // Create folder if doesn't exist
       if (!existsSync(uploadPath)) {
